@@ -1,5 +1,5 @@
 ---
-````markdown
+
 # 💰 Simple Payment Contract
 
 This folder contains the smart contract responsible for handling on-chain payments in a secure and transparent way.
