@@ -3,8 +3,8 @@
 ---
 De Cassio Braun e Lucas Henz.
 
-Uma API descentralizada para aceitar pagamentos em criptomoedas, construída sobre a blockchain da **Polygon**.  
-Permite que empresas e desenvolvedores aceitem USDT, USDC e MATIC com taxa fixa de apenas **0,85% por transação**.
+Uma API descentralizada para aceitar pagamentos em criptomoedas, construída sobre a blockchain 
+Permite que empresas e desenvolvedores aceitem USDT, USDC e outras stables com taxa fixa de apenas **0,85% por transação**.
 
 ---
 
