@@ -17,7 +17,7 @@
     "payments",
     "smart-contracts"
   ],
-  "author": "Lucas Henz",
+  "author": "Lucas Henz and Cassio Braun",
   "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
