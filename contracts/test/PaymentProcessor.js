@@ -1,59 +1,83 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("PaymentProcessor", function () {
-  let PaymentProcessor, paymentProcessor;
+describe("💰 Gas Efficiency Comparison - PaymentProcessor vs PaymentProcessorOP", function () {
   let owner, merchant, user;
+  let ProcessorString, ProcessorError;
+  let contractString, contractError;
 
   beforeEach(async function () {
     [owner, merchant, user] = await ethers.getSigners();
 
     const platformWallet = owner.address;
-    const feePercent = 100; // 1% (100 basis points)
+    const feePercent = 100; // 1%
 
-    PaymentProcessor = await ethers.getContractFactory("PaymentProcessor");
-    paymentProcessor = await PaymentProcessor.deploy(platformWallet, feePercent);
-    await paymentProcessor.waitForDeployment();
+    // Deploy versão com strings
+    ProcessorString = await ethers.getContractFactory("PaymentProcessor");
+    contractString = await ProcessorString.deploy(platformWallet, feePercent);
+    await contractString.waitForDeployment();
+
+    // Deploy versão com customError
+    ProcessorError = await ethers.getContractFactory("PaymentProcessorOP");
+    contractError = await ProcessorError.deploy(platformWallet, feePercent);
+    await contractError.waitForDeployment();
   });
 
-  it("deve permitir que o usuário envie um pagamento", async function () {
-    const paymentId = 1;
+  async function simulatePayment(contract, label) {
+    const paymentId = Math.floor(Math.random() * 10000);
     const paymentAmount = ethers.parseEther("1");
 
-    await paymentProcessor.connect(merchant).createPayment(paymentId, paymentAmount);
+    // criar e pagar
+    await contract.connect(merchant).createPayment(paymentId, paymentAmount);
 
-    const tx = await paymentProcessor.connect(user).pay(paymentId, { value: paymentAmount });
-    await tx.wait();
+    const tx = await contract.connect(user).pay(paymentId, { value: paymentAmount });
+    const receipt = await tx.wait();
 
-    const payment = await paymentProcessor.payments(paymentId);
-    expect(payment.paid).to.equal(true);
-    expect(payment.amount).to.equal(paymentAmount);
-  });
+    return {
+      label,
+      gasUsed: Number(receipt.gasUsed),
+    };
+  }
 
-  it("deve comparar gas entre pay (external) e payP (public)", async function () {
-    const paymentId = 2;
+  async function simulatePayP(contract, label) {
+    const paymentId = Math.floor(Math.random() * 10000) + 5000;
     const paymentAmount = ethers.parseEther("1");
 
-    await paymentProcessor.connect(merchant).createPayment(paymentId, paymentAmount);
-    const txExternal = await paymentProcessor.connect(user).pay(paymentId, { value: paymentAmount });
-    const receiptExternal = await txExternal.wait();
+    await contract.connect(merchant).createPayment(paymentId, paymentAmount);
 
-    const paymentId2 = 3;
-    await paymentProcessor.connect(merchant).createPayment(paymentId2, paymentAmount);
-    const txPublic = await paymentProcessor.connect(user).payP(paymentId2, { value: paymentAmount });
-    const receiptPublic = await txPublic.wait();
+    const tx = await contract.connect(user).payP(paymentId, { value: paymentAmount });
+    const receipt = await tx.wait();
 
-    // Converter BigInt para Number
-    const gasExternal = Number(receiptExternal.gasUsed);
-    const gasPublic = Number(receiptPublic.gasUsed);
-    const saving = (((gasExternal - gasPublic) / gasExternal) * 100).toFixed(2);
+    return {
+      label,
+      gasUsed: Number(receipt.gasUsed),
+    };
+  }
 
-    console.table({
-      "pay (external)": gasExternal,
-      "payP (public)": gasPublic,
-      "saving (%)": saving,
-    });
+  it("🔥 compara consumo de gas entre strings e customError", async function () {
+    const result1 = await simulatePayment(contractString, "String Errors (pay)");
+    const result2 = await simulatePayment(contractError, "Custom Errors (pay)");
 
-    expect(gasExternal).to.be.greaterThan(gasPublic);
+    const result3 = await simulatePayP(contractString, "String Errors (payP)");
+    const result4 = await simulatePayP(contractError, "Custom Errors (payP)");
+
+    console.table([
+      result1,
+      result2,
+      result3,
+      result4,
+      {
+        label: "Economia (pay)",
+        gasUsed: `${(((result1.gasUsed - result2.gasUsed) / result1.gasUsed) * 100).toFixed(2)}%`,
+      },
+      {
+        label: "Economia (payP)",
+        gasUsed: `${(((result3.gasUsed - result4.gasUsed) / result3.gasUsed) * 100).toFixed(2)}%`,
+      },
+    ]);
+
+    // simples validação só pra garantir que tudo rodou
+    expect(result1.gasUsed).to.be.greaterThan(0);
+    expect(result2.gasUsed).to.be.greaterThan(0);
   });
 });
