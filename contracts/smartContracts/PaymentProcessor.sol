@@ -69,6 +69,27 @@ contract PaymentProcessor {
         emit PaymentCompleted(_id, msg.sender, msg.value, fee);
     }
 
+     /// @notice Pay an existing payment request
+    function payP(uint256 _id) public payable {
+        Payment storage p = payments[_id];
+        require(p.id != 0, "Payment not found");
+        require(!p.paid, "Already paid");
+        require(msg.value == p.amount, "Incorrect amount");
+
+        uint256 fee = (msg.value * feePercent) / 10000;
+        uint256 merchantAmount = msg.value - fee;
+
+        // send fee and payment
+        (bool feeSent, ) = payable(platformWallet).call{value: fee}("");
+        require(feeSent, "Fee transfer failed");
+
+        (bool paidMerchant, ) = payable(p.merchant).call{value: merchantAmount}("");
+        require(paidMerchant, "Merchant transfer failed");
+
+        p.paid = true;
+        emit PaymentCompleted(_id, msg.sender, msg.value, fee);
+    }
+
     /// @notice Update the platform fee
     function updateFee(uint256 _newFee) external onlyPlatform {
         require(_newFee <= 1000, "Fee too high"); // max 10%
