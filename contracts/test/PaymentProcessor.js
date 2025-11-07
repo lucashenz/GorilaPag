@@ -1,50 +1,53 @@
-import { expect } from "chai";
-import { ethers } from "hardhat";
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-const compare = (bad, good) => {
-  console.table({
-    bad: bad.toString(),
-    good: good.toString(),
-    saving: `${((bad - good) / bad * 100).toFixed(2)}%`,
-  });
+describe("PaymentProcessor", function () {
+  let paymentProcessor;
+  let owner;
+  let user;
 
-  expect(bad).to.be.greaterThan(good);
-};
-
-describe("Gas Optimizations", function () {
-  async function deployFixture() {
-    const [owner, merchant, user] = await ethers.getSigners();
+  beforeEach(async function () {
+    [owner, user] = await ethers.getSigners();
 
     const PaymentProcessor = await ethers.getContractFactory("PaymentProcessor");
-    const paymentProcessor = await PaymentProcessor.deploy();
-    await paymentProcessor.waitForDeployment();
+    paymentProcessor = await PaymentProcessor.deploy();
+    await paymentProcessor.waitForDeployment(); // compatível com Hardhat v2.22+
+  });
 
-    // configuração básica do contrato (ajusta conforme seu construtor)
-    await paymentProcessor.createPayment(
-      merchant.address,
-      ethers.parseEther("1.0")
+  it("deve permitir que o usuário envie um pagamento", async function () {
+    const paymentAmount = ethers.parseEther("1.0");
+
+    // Envia pagamento
+    await expect(
+      user.sendTransaction({
+        to: paymentProcessor.target, // target = endereço do contrato
+        value: paymentAmount,
+      })
+    ).to.changeEtherBalances(
+      [user, paymentProcessor],
+      [paymentAmount * -1n, paymentAmount]
     );
+  });
 
-    return { paymentProcessor, owner, merchant, user };
-  }
+  it("deve permitir que o dono retire fundos", async function () {
+    const paymentAmount = ethers.parseEther("1.0");
 
-  it("Compare pay (external) vs payP (public)", async function () {
-    const { paymentProcessor, user } = await deployFixture();
+    // Usuário envia pagamento
+    await user.sendTransaction({
+      to: paymentProcessor.target,
+      value: paymentAmount,
+    });
 
-    // envia 1 ETH (ajusta conforme o createPayment define)
-    const amount = ethers.parseEther("1.0");
+    // Dono retira fundos
+    await expect(paymentProcessor.connect(owner).withdraw()).to.changeEtherBalances(
+      [paymentProcessor, owner],
+      [-paymentAmount, paymentAmount]
+    );
+  });
 
-    // --- pay() (external) ---
-    const txExternal = await paymentProcessor.connect(user).pay(1, { value: amount });
-    const receiptExternal = await txExternal.wait();
-
-    // --- payP() (public) ---
-    // recria um novo pagamento para comparar em igualdade de condições
-    await paymentProcessor.createPayment(user.address, amount);
-    const txPublic = await paymentProcessor.connect(user).payP(2, { value: amount });
-    const receiptPublic = await txPublic.wait();
-
-    // comparação de gas
-    compare(receiptExternal.gasUsed, receiptPublic.gasUsed);
+  it("deve falhar se não for o dono tentando retirar", async function () {
+    await expect(paymentProcessor.connect(user).withdraw()).to.be.revertedWith(
+      "Only owner can withdraw"
+    );
   });
 });
