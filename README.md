@@ -40,10 +40,12 @@ Hardhat
 📦 Instalação e Execução
 
 1️⃣ Clonar o repositório
+```
 git clone https://github.com/SEU_USUARIO/GorilaPag.git
 cd GorilaPag
-
+```
 2️⃣ Configurar
+```
 npm install
-
+```
 ---
