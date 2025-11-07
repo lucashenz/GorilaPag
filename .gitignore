@@ -1,22 +1,50 @@
+# Dependências
 node_modules
 .env
+package-lock.json
 
-# Hardhat files
-/.cache
+# Build e cache do Hardhat
+.cache
 /artifacts
 /cache
 /deployments
-
-# TypeChain files
-/typechain
-/typechain-types
-
-# solidity-coverage files
-/coverage
-/coverage.json
-
-# Hardhat Ignition default folder for deployments against a local node
-ignition/deployments/chain-31337
-
-# Temporary files created by Hardhat during testing
 /tmp
+
+# TypeChain (geração de tipos)
+typechain/
+typechain-types/
+
+# Solidity Coverage
+coverage/
+coverage.json
+
+# Hardhat Ignition (deploys locais)
+ignition/deployments/
+
+# Logs e relatórios
+*.log
+logs/
+debug.log
+
+# Sistema operacional (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# VSCode e IDEs
+.vscode/
+.idea/
+
+# Scripts temporários e saídas de testes
+*.tsbuildinfo
+*.pid
+*.pid.lock
+
+# Arquivos de build de frontend (caso conecte depois)
+frontend/node_modules
+frontend/.next
+frontend/dist
+frontend/build
+
+# Outros diretórios temporários
+dist/
+out/
