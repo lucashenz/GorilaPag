@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  db: 
+    image: postgres:15-alpine 
+    
+    ports:
+      # Mapeia a porta interna do container (5432) para a externa (5432)
+      - "5432:5432" 
+      
+    environment:
+      # Credenciais que você usará no Python e no pgAdmin
+      POSTGRES_DB: gorilapag
+      POSTGRES_USER: cassio
+      POSTGRES_PASSWORD: nanoiafc
+    
+    # Persistência de dados: garante que os dados não se percam
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: always 
+
+volumes:
+  postgres_data:
