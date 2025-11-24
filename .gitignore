@@ -1,6 +1,7 @@
 # Dependências
 node_modules
 .env
+venv
 package-lock.json
 
 # Build e cache do Hardhat
