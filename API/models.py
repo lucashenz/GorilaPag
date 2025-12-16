@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.types import DECIMAL
-from database import Base
+from .database import Base
 import uuid6
 from datetime import datetime
 
