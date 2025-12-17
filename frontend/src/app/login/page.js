@@ -1,27 +1,16 @@
 "use client";
 
 import LoginForm from "./LoginForm";
+import "@/styles/pageInicio.css";
 
 export default function LoginPage() {
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Entrar no GorilaPag 🦍</h1>
-      <LoginForm />
+    <div className="page">
+      <div className="card">
+        <h1 className="title">Entrar</h1>
+        <p className="subtitle">Faça login para continuar</p>
+        <LoginForm />
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    backgroundColor: "#707070ff",
-  },
-  title: {
-    fontSize: "2rem",
-    marginBottom: "20px",
-  },
-};

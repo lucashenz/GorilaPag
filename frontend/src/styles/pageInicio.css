@@ -1,0 +1,215 @@
+/* Reset básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+/* Página */
+.page {
+  height: 100vh;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card central */
+.card {
+  width: 380px;
+  background-color: #ffffff;
+  padding: 40px 32px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+/* Título */
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+/* Subtítulo */
+.subtitle {
+  font-size: 14px;
+  color: #6b6b6b;
+  margin-bottom: 28px;
+}
+
+/* Inputs (caso o LoginForm não estilize) */
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+/* Botão */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.login-input {
+  width: 100%;
+  padding: 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  background-color: #fff;
+}
+
+.login-input::placeholder {
+  color: #9b9b9b;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.home {
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+  height: 72px;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-size: 14px;
+}
+
+.nav-button {
+  background: #5b2dab;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-button-secondary {
+  background: transparent;
+  color: #000;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+} 
+
+/* HERO */
+.hero {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hero-text {
+  max-width: 560px;
+  color: #1a1a1a;
+}
+
+.hero-text h1 {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hero-text h1 span {
+  color: #5b2dab;
+}
+
+.hero-text p {
+  margin-top: 20px;
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.crypto {
+  margin-top: 32px;
+}
+
+.crypto span {
+  font-size: 14px;
+  color: #555;
+}
+
+.crypto-icons {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.crypto-icons div {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}

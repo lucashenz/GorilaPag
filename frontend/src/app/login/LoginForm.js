@@ -1,52 +1,53 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import Button from "../../components/button";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Senha:", senha);
-    // Aqui você pode futuramente chamar sua API (ex: axios.post('/api/login'))
+    setError(null);
+
+    try {
+      await login(email, senha);
+      router.push("/gerar-pagamento");
+    } catch (err) {
+      setError("Email ou senha inválidos");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
+    <form onSubmit={handleSubmit} className="login-form">
       <input
         type="email"
         placeholder="E-mail"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        style={styles.input}
+        className="login-input"
         required
       />
+
       <input
         type="password"
         placeholder="Senha"
         value={senha}
         onChange={(e) => setSenha(e.target.value)}
-        style={styles.input}
+        className="login-input"
         required
       />
+
+      {error && <p className="login-error">{error}</p>}
+
       <Button text="Entrar" type="submit" />
     </form>
   );
 }
-
-const styles = {
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    width: "300px",
-  },
-  input: {
-    padding: "10px",
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-  },
-};
