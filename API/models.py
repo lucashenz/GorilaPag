@@ -4,10 +4,12 @@ from .database import Base
 import uuid6
 from datetime import datetime
 
+#arquivo que constroi as tabelas do banco de dados, cada class e uma tabela e cada propriendade [e uma coluna]
+
 class Merchant(Base):
     __tablename__ = 'merchants' 
 
-    id = Column( #
+    id = Column( #id e coluna, de string, chave primária, valor automático, Não permite NULL, não existam dois valores iguais
         String, 
         primary_key=True,
         default=lambda: str(uuid6.uuid7()), 

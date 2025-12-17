@@ -4,9 +4,11 @@ from decimal import Decimal
 from zxcvbn import zxcvbn
 from eth_utils import is_checksum_address, to_checksum_address, is_address
 
+#arquivo que constroi as bases dos dados que vai receber do post da rota 
+#a biblioteca BaseModel ja pega os dados por base da ordem e do tipo e armazena cada dado na variavel
+# eemplo JSON = {"Valor": "50.00", "URL": "ndhddjqdnqj.com", "descricao": "peixes"} -> Valor = 50.00, URL = dnjadb uayd, descricao = peixes.
 
 class dadosCobranca(BaseModel):
-    tipoDinheiro: bool
     Valor: Decimal
     URL_callback: str
     descricao: str
