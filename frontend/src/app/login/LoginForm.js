@@ -27,18 +27,18 @@ export default function LoginForm() {
       }),
     });
 
-    const data = await response.json(); // pega o JSON que a API retornou
+    const data = await response.json(); 
 
     if (!response.ok) {
-      throw new Error(data.detail || "Erro ao logar");
-    }
+       setError(data?.detail?.error?.message || "Erro desconhecido");
+      return;
+    } 
 
-    console.log("Login bem-sucedido:", data);
     router.push("/dashboard");
 
   } catch (err) {
     console.error("Erro da API:", err);
-    setError(err.message); // mostra a mensagem no site
+    setError(err.message); 
   }
   };
 

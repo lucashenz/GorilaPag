@@ -85,10 +85,10 @@ def login_merchant( login: dadosLogin, db: db_dependency): #recebe modelo Login-
     merchant = (db.query(models.Merchant).filter(models.Merchant.email == login.email).first()) # verifica se o email esta no banco de dados
 
     if not merchant: #caso nao esteja 
-        erro("Credenciais inválidas.", 401)
+        erro("Email ou senha inválido", 401)
 
     if not verify_password(login.password, merchant.hashed_password): #verfica se o password e o mesmo hash do password 
-        erro("Credenciais inválidas.", 401)
+        erro("Email ou senha inválido", 401)
 
     access_token = create_access_token({"sub": merchant.id}) #criar o token de acesso quando logado
     refresh_token = create_refresh_token({"sub": merchant.id}) #crair o refresh do token quando logado
