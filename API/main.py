@@ -13,7 +13,6 @@ from .schemas import dadosCobranca, dadosMerchant, dadosLogin
 from .security import (
     SECRET_KEY,
     ALGORITHM,
-    validar_url,
     hash_password,
     verify_password,
     create_access_token,
@@ -22,11 +21,29 @@ from .security import (
 from .dependencies import get_current_merchant, erro
 #------------------------------------------------
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI() # carrega objeto FastAPI
+
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:3000",  # endereço do seu front-end
+    "http://127.0.0.1:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 models.Base.metadata.create_all(bind=engine) # carrega e cria banco de dados
 
 db_dependency = Annotated[Session, Depends(get_db)] # Cria um atalho para o FastAPI injetar a sessão do banco nas rotas (get_db)
+
 
 # ---------------ROTA MERCHANT REGISTER-------------------
 
@@ -38,10 +55,6 @@ def register_merchant(merchant: dadosMerchant, db: db_dependency): #quando execu
 
     if existing: # se existe avisa email ja cadastrado
         erro("Email já cadastrado.", 409) 
-
-    if merchant.callback_url_default: #testa se o url esta no modelo correto
-        if not validar_url(merchant.callback_url_default):
-            erro("URL inválida.", 420)
 
     hashed_password = hash_password(merchant.password) # cria um hash para a senha registrada, questao de seguranca
 
@@ -138,8 +151,7 @@ def criar_cobranca(cobranca: dadosCobranca,
             erro("id_marchant invalido", 401)
 
     if cobranca.URL_callback: #verifica se o campo de url _callback ta preenchido
-        if not validar_url(cobranca.URL_callback): #se sim, testa se o ofrmato ta certo
-            erro("URL inválida.", 420)
+        
         callback_url = cobranca.URL_callback
     else:
         callback_url = merchant.callback_url_default # se nao usao o url padrao definido no registro

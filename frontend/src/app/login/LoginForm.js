@@ -17,12 +17,29 @@ export default function LoginForm() {
     e.preventDefault();
     setError(null);
 
-    try {
-      await login(email, senha);
-      router.push("/gerar-pagamento");
-    } catch (err) {
-      setError("Email ou senha inválidos");
+  try {
+    const response = await fetch("http://127.0.0.1:8000/v1/merchants/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password: senha
+      }),
+    });
+
+    const data = await response.json(); // pega o JSON que a API retornou
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Erro ao logar");
     }
+
+    console.log("Login bem-sucedido:", data);
+    router.push("/dashboard");
+
+  } catch (err) {
+    console.error("Erro da API:", err);
+    setError(err.message); // mostra a mensagem no site
+  }
   };
 
   return (

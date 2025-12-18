@@ -67,15 +67,3 @@ def hash_password(password: str) -> str:
 def verify_password(password: str, hashed: str) -> bool:
     return pwd_context.verify(password, hashed)
 
-
-# Valida se uma URL é válida (http ou https)
-def validar_url(url: str) -> bool:
-    try:
-        resultado = urlparse(url)
-        # Verifica esquema e domínio
-        return all([
-            resultado.scheme in ["http", "https"],
-            resultado.netloc
-        ])
-    except:
-        return False
