@@ -9,7 +9,7 @@ export default function Navbar() {
     <header className="navbar">
       <div className="logo">
         <span className="logo-icon">🦍</span>
-        <span className="logo-text">Pag</span>
+        <span className="logo-text">GorilaPag</span>
       </div>
 
       <nav className="nav-links">

@@ -8,7 +8,7 @@ import "@/styles/pageInicio.css";
 export default function HomePage() {
   return (
     <div className="home">
-      <Navbar />
+      <Navbar/>
 
       <main className="hero">
         <div className="hero-text">
@@ -21,19 +21,13 @@ export default function HomePage() {
             intermediários e sem burocracia.
           </p>
 
-          <div className="crypto">
-            <span>Criptomoedas usadas:</span>
-            <div className="crypto-icons">
-              <div>Ξ</div>
-              <div>₮</div>
-              <div>$</div>
-            </div>
+          <div>
+          <PrimaryCTA/>
           </div>
         </div>
 
         <div className="hero-image">
           <Image src="/gorila.jpg" alt="GorilaPag" width={450} height={450} />
-          <PrimaryCTA />
         </div>
       </main>
     </div>

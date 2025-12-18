@@ -213,3 +213,22 @@ button:hover {
   justify-content: center;
   font-weight: 600;
 }
+
+.primary-cta {
+  margin-top: 75px;
+  padding: 13px 20px;
+  background: #5b2dab;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: fit-content;
+}
+
+.primary-cta:hover {
+  opacity: 0.9
+}
