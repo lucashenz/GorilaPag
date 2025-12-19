@@ -17,7 +17,7 @@ export default function PrimaryCTA() {
 
   return (
     <button className="primary-cta" onClick={handleClick}>
-      GERAR PAGAMENTO
+      GERAR PAGAMENTO ➤
     </button>
   );
 }
