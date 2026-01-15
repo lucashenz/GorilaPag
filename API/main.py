@@ -1,10 +1,9 @@
-# codigo principal, controla rotas e suas funcionalidades
-
-#-------------------bibliotecas----------------------
 from fastapi import FastAPI, Depends, status, Body
 from sqlalchemy.orm import Session
 from typing import Annotated
 import jwt
+from datetime import datetime, timedelta
+import uuid
 
 #-------------------arquivos externos----------------
 from . import models
@@ -19,31 +18,13 @@ from .security import (
     create_refresh_token
 )
 from .dependencies import get_current_merchant, erro
-#------------------------------------------------
-
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI() # carrega objeto FastAPI
 
-from fastapi.middleware.cors import CORSMiddleware
-
-origins = [
-    "http://localhost:3000",  # endereço do seu front-end
-    "http://127.0.0.1:3000"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-models.Base.metadata.create_all(bind=engine) # carrega e cria banco de dados
+models.Base.metadata.create_all(bind=engine) # carrega e cria banco de dados                                                                                                                    
 
 db_dependency = Annotated[Session, Depends(get_db)] # Cria um atalho para o FastAPI injetar a sessão do banco nas rotas (get_db)
-
+                                                                                                                                                 
 
 # ---------------ROTA MERCHANT REGISTER-------------------
 
@@ -108,6 +89,7 @@ def refresh_token(refresh_token: str = Body(..., embed=True) ): # Recebe o refre
     try:
         # Decodifica o JWT usando a chave secreta e o algoritmo definido
         # Se o token estiver adulterado ou inválido, gera exceção
+
         payload = jwt.decode(
             refresh_token,
             SECRET_KEY,
@@ -140,35 +122,35 @@ def refresh_token(refresh_token: str = Body(..., embed=True) ): # Recebe o refre
 @app.post("/v1/merchants/payments", status_code=status.HTTP_201_CREATED)
 def criar_cobranca(cobranca: dadosCobranca, 
                    db: db_dependency, 
-                   merchant_id: int = Depends(get_current_merchant)): #recebe modelo de cobranca ->valor, url e descricao + banco de dados + id_merchan por token
+                   merchant_id: int = Depends(get_current_merchant)):
 
-    if cobranca.Valor <= 0: #se valor for menor ou igual a 0 aponta erro
+    if cobranca.Valor <= 0: 
         erro("Valor inválido.", 460)
 
     merchant = db.query(models.Merchant).filter( models.Merchant.id == merchant_id ).first()
 
-    if not merchant_id:  # Garante que o ID existe no banco
+    if not merchant:  # Garante que o ID existe no banco
             erro("id_marchant invalido", 401)
 
-    if cobranca.URL_callback: #verifica se o campo de url _callback ta preenchido
-        
-        callback_url = cobranca.URL_callback
-    else:
-        callback_url = merchant.callback_url_default # se nao usao o url padrao definido no registro
+    expires_at = datetime.utcnow() + timedelta(seconds=cobranca.expires_in)
+
+    payment_id = str(uuid.uuid4())
 
     new_payment = models.PaymentOrder( #cria objeto no modelo de pagamento
+        id=payment_id,
         merchant_id=merchant_id,
-        valor=cobranca.Valor,
-        url_callback=callback_url,
-        descricao=cobranca.descricao
+        amount= float(cobranca.Valor),
+        token=cobranca.token_recebido,
+        network=cobranca.rede,
+        wallet_address = cobranca.wallet_recebimento,
+        created_at = datetime.utcnow(),
+        expires_at = expires_at
     )
 
     db.add(new_payment)
     db.commit()
-    db.refresh(new_payment) # adciona envia e atauliza banco de dados
+    db.refresh(new_payment)
 
-    return { # retorna o id do pagamento, o valor e o url para pagamento
-        "id": new_payment.id,
-        "valor_usd": new_payment.valor,
-        "payment_url": f"https://gorilapag.com/pay/{new_payment.id}" 
+    return { 
+        "link": f"https://gorilapag.com/pay/{new_payment.id}" 
     }

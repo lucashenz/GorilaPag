@@ -18,7 +18,7 @@ export default function LoginForm() {
     setError(null);
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/v1/merchants/login", {
+    const response = await fetch("/api/v1/merchants/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -34,6 +34,8 @@ export default function LoginForm() {
       return;
     } 
 
+    localStorage.setItem("access_token", data.access_token);
+    
     router.push("/dashboard");
 
   } catch (err) {

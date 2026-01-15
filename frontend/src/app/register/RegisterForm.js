@@ -19,30 +19,31 @@ export default function RegisterForm() {
     e.preventDefault();
     setError(null);
 
-    try {
+   try {
+        const response = await fetch("/api/v1/merchants/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password: senha,
+            callback_url_default: callbackUrl,
+            wallet_address: wallet,
+          }),
+        });
 
-      const response = await fetch("http://127.0.0.1:8000/v1/merchants/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password: senha,
-          callback_url_default: callbackUrl,               
-          wallet_address: wallet    
-        }),
-      });
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(text || "Erro ao cadastrar");
+        }
 
-      if (!response.ok) {
-        throw new Error("Erro ao cadastrar");
+        router.push("/login");
+
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
       }
-
-      router.push("/login");
-
-    } catch (err) {
-      setError("Erro ao cadastrar. Verifique os dados e tente novamente.");
-    }
   };
 
   return (

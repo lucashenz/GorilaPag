@@ -1,8 +1,8 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Float, Numeric
 from sqlalchemy.types import DECIMAL
 from .database import Base
 import uuid6
-from datetime import datetime
+import enum
 
 #arquivo que constroi as tabelas do banco de dados, cada class e uma tabela e cada propriendade [e uma coluna]
 
@@ -33,38 +33,31 @@ class Merchant(Base):
 
     wallet_address = Column(String, nullable=False)
 
+
+class PaymentStatus(str, enum.Enum):
+    PENDING = "PENDING"
+    PAID = "PAID"
+    EXPIRED = "EXPIRED"
+    FAILED = "FAILED"
+    CANCELLED = "CANCELLED"
+
 class PaymentOrder(Base):
     __tablename__ = 'payment_orders' 
 
-    id = Column( 
-        String, 
-        primary_key=True, 
-        default=lambda: str(uuid6.uuid7()), 
-        nullable=False, 
-        unique=True 
-    )
+    id = Column(String, primary_key=True, index=True)
 
-    merchant_id = Column(
-        String, 
-        ForeignKey("merchants.id"), 
-        nullable=False 
-    )
+    merchant_id = Column(String, index=True)
 
-    valor = Column( #DOLAR APENAS POR ENQUANTO
-        DECIMAL(precision=18, scale=2), 
-        nullable=False
-    )
+    amount = Column(Numeric(precision=18, scale=8))
 
-    url_callback = Column(
-        String,
-        nullable=False
-    )
+    token = Column(String)
 
-    descricao = Column(
-        String,
-        nullable=True 
-    )
-    
-    status = Column(String, nullable=False, default="pending")
-    
-    created_at = Column(DateTime, default=datetime.utcnow)
+    network = Column(String)
+
+    wallet_address = Column(String)
+
+    status = Column(String, default=PaymentStatus.PENDING.value, nullable=False)
+
+    created_at = Column(DateTime)
+
+    expires_at = Column(DateTime)
